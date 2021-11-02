@@ -227,12 +227,13 @@ CSL tests."
   (regexp-opt '("_" "{" "}" "&" "#" "%" "$"))
   "Regular expression matching characters to be escaped in LaTeX output.")
 
-(defun citeproc-fmt--latex-escape (s)
-  "Return the LaTeX-escaped version of string S."
-  (replace-regexp-in-string citeproc-fmt--latex-esc-regex "\\\\\\&" s))
+(defun citeproc-fmt--latex-format (s)
+  "Return the LaTeX-formatted version of string S."
+  (let ((escaped (replace-regexp-in-string citeproc-fmt--latex-esc-regex "\\\\\\&" s)))
+    (s-replace-all '(("“" . "``") ("”" . "''")) escaped)))
 
 (defconst citeproc-fmt--latex-alist
-  `((unformatted . ,#'citeproc-fmt--latex-escape)
+  `((unformatted . ,#'citeproc-fmt--latex-format)
     (href . ,(lambda (x y) (concat "\\href{" (replace-regexp-in-string "%" "\\\\%" y)
 				   "}{" x "}")))
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
